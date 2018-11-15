@@ -29,14 +29,14 @@ logger = logging.getLogger(__name__)
 
 # Global vars:
 IJIN = "ABSEN"
-SET_IJIN,ATASAN,ALASAN,SELESAI,CALENDAR,ALASAN_IJIN,PILIH_KARYAWAN,BATAL, MENU, SET_STAT,SMARTBOT,TEXT_MESSAGE, VIOTEMP, HELP, MAP, FAQ, ABOUT, LOCATION,VIOSKETCH, WATERLVL,VIOPRODUCT = range(21)
+SET_IJIN,ATASAN,ALASAN,SELESAI,CALENDAR,ALASAN_IJIN,PILIH_KARYAWAN,BATAL, ALASAN_APP, SELESAI_APP,TEXT_MESSAGE, BATAL_APP, APP_DPP, ABOUT, LOCATION  = range(17)
 STATE = SET_IJIN
 
 data_all_tele= db.get_tele_all()
 print(data_all_tele)
 
 Data_Ijin_Semua ={}
-Data_Ijin=[]
+App_Manager_Semua ={}
 
 def start(bot, update):
     """
@@ -56,7 +56,6 @@ Silahkan pilih ijin apa untuk memulai"
     update.message.reply_text(message, reply_markup=reply_markup)
 
     print(Data_Ijin_Semua)
-    #print(Data_Ijin)
 
     return SET_IJIN
 
@@ -74,14 +73,10 @@ def set_ijin(bot, update):
     update.message.reply_text(pilihtanggal[IJIN],
                               reply_markup=ReplyKeyboardRemove())
 
-    Data_Ijin.append(user.id)
-    Data_Ijin.append(IJIN)
-
     Data_Ijin_Semua.setdefault(user.id, []).append(user.id)
     Data_Ijin_Semua.setdefault(user.id, []).append(IJIN)
 
     print(Data_Ijin_Semua)
-    #print(Data_Ijin)
 
     return CALENDAR
 
@@ -103,12 +98,9 @@ def inline_handler(bot,update):
 
         logger.info("Calendar set to {}.".format(date.strftime('%d/%m/%Y')))
 
-    Data_Ijin.append(date.strftime("%Y-%m-%d"))
-
     Data_Ijin_Semua.setdefault(user, []).append(date.strftime("%Y-%m-%d"))
 
     print(Data_Ijin_Semua)
-    #print(Data_Ijin)
 
     return ATASAN
 
@@ -139,12 +131,9 @@ def set_atasan(bot,update):
     update.message.reply_text(alasan_ijinapa[IJIN],
                               reply_markup=ReplyKeyboardRemove())
 
-    Data_Ijin.append(atasan)
-
     Data_Ijin_Semua.setdefault(user.id, []).append(atasan)
 
     print(Data_Ijin_Semua)
-    #print(Data_Ijin)
 
 
     return ALASAN_IJIN
@@ -157,11 +146,9 @@ def alasan_ijin(bot, update):
     update.message.reply_text(selesaiin[IJIN],
                               reply_markup=ReplyKeyboardRemove())
 
-    Data_Ijin.append(alasan)
     Data_Ijin_Semua.setdefault(user.id, []).append(alasan)
 
     print(Data_Ijin_Semua)
-    #print(Data_Ijin)
 
     return ALASAN_IJIN
 
@@ -187,7 +174,6 @@ def selesai(bot, update):
 def batal(bot, update):
     user = update.message.from_user
     del Data_Ijin_Semua[user.id]
-    del Data_Ijin[:]
 
     update.message.reply_text(batalkalimat[IJIN],
                               reply_markup=ReplyKeyboardRemove())
@@ -196,19 +182,110 @@ def batal(bot, update):
 
 
 def pilih_karyawan(bot, update):
-    print('tes')
-
-
-def faq(bot, update):
-    """
-    FAQ function. Displays FAQ about disaster situations.
-    """
     user = update.message.from_user
-    logger.info("FAQ requested by {}.".format(user.first_name))
-    bot.send_message(chat_id=update.message.chat_id, text=faq_info[LANG])
-    bot.send_message(chat_id=update.message.chat_id, text=back2menu[LANG])
-    return
 
+    logger.info("Pilih Karyawan command by {}".format(user.first_name))
+    datakarijin= db.get_data_ijin_kar(user.id)
+
+    keyboard = [[karyawan] for karyawan in datakarijin]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard,
+                                       one_time_keyboard=True,
+                                       resize_keyboard=True)
+
+    update.message.reply_text(karyawan_menu[IJIN], reply_markup=reply_markup)
+
+    return PILIH_KARYAWAN
+
+
+def set_karyawan(bot,update):
+    pilih_karyawan = update.message.text
+    user = update.message.from_user
+    logger.info("Pilih Karyawan set by {} to {}.".format(user.first_name, pilih_karyawan))
+    update.message.reply_text(menuju_appdpp[IJIN],
+                              reply_markup=ReplyKeyboardRemove())
+
+    App_Manager_Semua.setdefault(user.id, []).append(user.id)
+    App_Manager_Semua.setdefault(user.id, []).append(pilih_karyawan)
+
+    print(App_Manager_Semua)
+
+    return APP_DPP
+
+def pilih_appdpp(bot, update):
+    user = update.message.from_user
+
+    logger.info("Pilih appdpp command by {}".format(user.first_name))
+
+    keyboard = [['APPROVE', 'DISAPPROVE']]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard,
+                                       one_time_keyboard=True,
+                                       resize_keyboard=True)
+
+    update.message.reply_text(appdpp_menu[IJIN], reply_markup=reply_markup)
+
+    return APP_DPP
+
+
+def set_appdpp(bot,update):
+    pilih_appdpp = update.message.text
+    user = update.message.from_user
+    logger.info("Pilih appdpp set by {} to {}.".format(user.first_name, pilih_appdpp))
+    update.message.reply_text(alasan_Appapa[IJIN],
+                              reply_markup=ReplyKeyboardRemove())
+
+    App_Manager_Semua.setdefault(user.id, []).append(pilih_appdpp)
+
+    print(App_Manager_Semua)
+
+    return ALASAN_APP
+
+def alasan_app(bot,update):
+    alasan_app = update.message.text
+    user = update.message.from_user
+    logger.info("Alasan_app set by {} to {}.".format(user.first_name, alasan_app))
+
+    update.message.reply_text(selesaiin_app[IJIN],
+                              reply_markup=ReplyKeyboardRemove())
+
+    App_Manager_Semua.setdefault(user.id, []).append(alasan_app)
+
+    print(App_Manager_Semua)
+
+    return ALASAN_APP
+
+def selesai_app(bot, update):
+    user = update.message.from_user
+    data= App_Manager_Semua[user.id]
+
+    datainsert=db.insert_insert_app(data)
+
+    logger.info("ijin_selesai set by {}".format(user.first_name))
+    update.message.reply_text(kalimatselesai_app[IJIN],
+                              reply_markup=ReplyKeyboardRemove())
+
+    data_tele=db.get_tele_karyawan(data)
+
+    if data[1]=="APPROVE":
+        appis="Disetujui"
+    elif data[1]=="DISAPPROVE":
+        appis="tidak Disetujui"
+
+    bot.send_message(chat_id=data_tele, text='Manager anda dengan nama %s %s ijin anda' %(datainsert,data[1]))
+
+    del App_Manager_Semua[user.id]
+
+    return SELESAI_APP
+
+def batal_app(bot, update):
+    user = update.message.from_user
+    del App_Manager_Semua[user.id]
+
+    update.message.reply_text(batalkalimat_app[IJIN],
+                              reply_markup=ReplyKeyboardRemove())
+
+    return BATAL_APP
 
 def about_bot(bot, update):
     """
@@ -218,24 +295,6 @@ def about_bot(bot, update):
     logger.info("About info requested by {}.".format(user.first_name))
     bot.send_message(chat_id=update.message.chat_id, text=about_info[LANG])
     bot.send_message(chat_id=update.message.chat_id, text=back2menu[LANG])
-    return
-
-def smartbot(bot, update):
-    """
-    Smart Bot function. Displays info about VIO Bot.
-    """
-    user = update.message.from_user
-    logger.info("Smart Bot info requested by {}.".format(user.first_name))
-    request = apiai.ApiAI('8b2391e9cc974e4982f2e6225f15e258').text_request()
-    request.lang='id'
-    request.session_id='VIOBotAssistant'
-    request.query=update.message.text
-    responseJson=json.loads(request.getresponse().read().decode('utf-8'))
-    response= responseJson['result']['fulfillment']['speech']
-    if response:
-        bot.send_message(chat_id=update.message.chat_id, text=response)
-    else:
-        bot.send_message(chat_id=update.message.chat_id, text="Aku tidak begitu paham yang dimaksud?")
     return
 
 def help(bot, update):
@@ -267,22 +326,22 @@ def main():
     # Get the dispatcher to register handlers:
     dp = updater.dispatcher
 
-    atasans=db.get_nama_manager()
+    karyawans=db.get_nama_karyawan()
 
-    atasann=','.join(atasans)
-    listatasan = atasann.replace(',', '|')
-    print(listatasan)
+    karyawann=','.join(karyawans)
+    listkaryawan = karyawann.replace(',', '|')
+    print(listkaryawan)
 
     # Add conversation handler with predefined states:
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('start', start),CommandHandler('pilih_karyawan', pilih_karyawan)],
 
         states={
             SET_IJIN: [RegexHandler('^(TELAT|ABSEN|DINAS KELUAR)$', set_ijin)],
 
-            ATASAN: [CommandHandler('atasan', atasan),RegexHandler('^(%s)$' %listatasan, set_atasan),CommandHandler('batal', batal)],
+            ATASAN: [CommandHandler('atasan', atasan),RegexHandler('^(%s)$' %listkaryawan, set_atasan),CommandHandler('batal', batal)],
 
-            ALASAN_IJIN: [CommandHandler('alasan_ijin', alasan_ijin),CommandHandler('selesai', selesai),CommandHandler('batal', batal)],
+            ALASAN_IJIN: [CommandHandler('alasan_ijin', alasan_ijin),CommandHandler('selesai', selesai),CommandHandler('batal', batal),MessageHandler(Filters.text, alasan_ijin)],
 
             SELESAI: [CommandHandler('selesai', selesai),CommandHandler('batal', batal),CommandHandler('start', start)],
 
@@ -290,12 +349,19 @@ def main():
 
             CALENDAR: [CommandHandler('calendar', calendar_handler),CallbackQueryHandler(inline_handler)],
 
-            PILIH_KARYAWAN: [CommandHandler('pilih_karyawan', pilih_karyawan)],
+            PILIH_KARYAWAN: [CommandHandler('pilih_karyawan', pilih_karyawan),RegexHandler('^(%s)$' %listkaryawan, set_karyawan),CommandHandler('batal_app', batal_app)],
+
+            APP_DPP: [CommandHandler('pilih_appdpp', pilih_appdpp),RegexHandler('^(APPROVE|DISAPPROVE)$', set_appdpp),CommandHandler('batal_app', batal_app)],
+
+            ALASAN_APP: [CommandHandler('alasan_app', alasan_app),CommandHandler('selesai_app', selesai_app),MessageHandler(Filters.text, alasan_app),CommandHandler('batal_app', batal_app)],
+
+            SELESAI_APP: [CommandHandler('selesai_app', selesai),CommandHandler('batal_app', batal_app),CommandHandler('pilih_karyawan', pilih_karyawan)],
+
+            BATAL_APP: [CommandHandler('batal_app', batal_app),CommandHandler('pilih_karyawan', pilih_karyawan)]
 
         },
 
-        fallbacks=[CommandHandler('help', help),
-                   MessageHandler(Filters.text, alasan_ijin)]
+        fallbacks=[CommandHandler('help', help)]
     )
 
     dp.add_handler(conv_handler)

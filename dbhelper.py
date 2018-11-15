@@ -14,6 +14,13 @@ class DBHelper:
         data= cursor.fetchall()
         return [x['nama_pegawai'] for x in data]
 
+    def get_nama_karyawan(self):
+        stmt = "SELECT nama_pegawai FROM employee "
+        cursor= self.conn.cursor()
+        exc= cursor.execute(stmt)
+        data= cursor.fetchall()
+        return [x['nama_pegawai'] for x in data]
+
     def get_tele_all(self):
         stmt = "SELECT id_telegram FROM employee"
         cursor= self.conn.cursor()
@@ -30,6 +37,29 @@ class DBHelper:
         getteledapat= teledapat.get('id_telegram')
 
         return getteledapat
+
+    def get_tele_karyawan(self,data):
+        karyawan=data[1]
+        stmt = "SELECT id_telegram FROM employee where nama_pegawai=%s"
+        cursorcek= self.conn.cursor()
+        cursorcek.execute(stmt, (karyawan))
+        teledapat = cursorcek.fetchone()
+        getteledapat= teledapat.get('id_telegram')
+
+        return getteledapat
+
+    def get_data_ijin_kar(self,id_telekarya):
+        ceksql= "SELECT `nama_pegawai` FROM `employee` WHERE id_telegram=%s"
+        cursorcek= self.conn.cursor()
+        cursorcek.execute(ceksql, (id_telekarya))
+        namadapat = cursorcek.fetchone()
+        getnamadapat= namadapat.get('nama_pegawai')
+
+        stmt = "SELECT nama_pegawai FROM ijin_absensi where atasan=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
+        cursor= self.conn.cursor()
+        exc= cursor.execute(stmt, (getnamadapat))
+        data= cursor.fetchall()
+        return [x['nama_pegawai'] for x in data]
 
     def insert_data_ijin(self,data):
         id_tele=data[0]
@@ -50,6 +80,26 @@ class DBHelper:
         instdata = "INSERT INTO `ijin_absensi`(`nama_pegawai`, `ijin`, `alasan_ijin`, `tanggal_ijin`, `waktu_buat_ijin`, `atasan`) VALUES (%s,%s,%s,%s,%s,%s)"
         cursorinst= self.conn.cursor()
         excinst= cursorinst.execute(instdata,(getnamadapat,ijin,alasan_ijin,tanggal,timestamp,manager))
+
+        self.conn.commit()
+
+        return getnamadapat
+
+    def insert_insert_app(self,data):
+        id_tele=data[0]
+        nama_karyawan_ijin=data[1]
+        app_dpp=data[2]
+        alasan_app=data[3]
+
+        ceksql= "SELECT `nama_pegawai` FROM `employee` WHERE id_telegram=%s"
+        cursorcek= self.conn.cursor()
+        cursorcek.execute(ceksql, (id_tele))
+        namadapat = cursorcek.fetchone()
+        getnamadapat= namadapat.get('nama_pegawai')
+
+        instdata = "UPDATE `ijin_absensi` SET `app`=%s,`app_by`=%s,`alasan_app_dpp`=%s WHERE atasan=%s AND nama_pegawai=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
+        cursorinst= self.conn.cursor()
+        excinst= cursorinst.execute(instdata,(app_dpp,getnamadapat,alasan_app,getnamadapat,nama_karyawan_ijin))
 
         self.conn.commit()
 
