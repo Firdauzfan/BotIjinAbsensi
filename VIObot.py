@@ -272,7 +272,7 @@ def selesai_app(bot, update):
     elif data[1]=="DISAPPROVE":
         appis="tidak Disetujui"
 
-    bot.send_message(chat_id=data_tele, text='Manager anda dengan nama %s %s ijin anda dengan alasan seperti berikut \n %s' %(datainsert,data[1],data[4]))
+    bot.send_message(chat_id=data_tele, text='Manager anda dengan nama %s %s ijin anda dengan alasan seperti berikut \n %s' %(datainsert,data[1],data[3]))
 
     del App_Manager_Semua[user.id]
 
