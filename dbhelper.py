@@ -55,7 +55,7 @@ class DBHelper:
         namadapat = cursorcek.fetchone()
         getnamadapat= namadapat.get('nama_pegawai')
 
-        stmt = "SELECT nama_pegawai FROM ijin_absensi where atasan=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
+        stmt = "SELECT nama_pegawai FROM ijin_absensi where atasan=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE()) AND `aktif_appdpp_manager`='1'"
         cursor= self.conn.cursor()
         exc= cursor.execute(stmt, (getnamadapat))
         data= cursor.fetchall()
@@ -77,7 +77,7 @@ class DBHelper:
         namadapat = cursorcek.fetchone()
         getnamadapat= namadapat.get('nama_pegawai')
 
-        instdata = "INSERT INTO `ijin_absensi`(`nama_pegawai`, `ijin`, `alasan_ijin`, `tanggal_ijin`, `waktu_buat_ijin`, `atasan`) VALUES (%s,%s,%s,%s,%s,%s)"
+        instdata = "INSERT INTO `ijin_absensi`(`nama_pegawai`, `ijin`, `alasan_ijin`, `tanggal_ijin`, `waktu_buat_ijin`, `atasan`,`aktif_appdpp_manager`) VALUES (%s,%s,%s,%s,%s,%s,'1')"
         cursorinst= self.conn.cursor()
         excinst= cursorinst.execute(instdata,(getnamadapat,ijin,alasan_ijin,tanggal,timestamp,manager))
 
@@ -97,10 +97,24 @@ class DBHelper:
         namadapat = cursorcek.fetchone()
         getnamadapat= namadapat.get('nama_pegawai')
 
-        instdata = "UPDATE `ijin_absensi` SET `app`=%s,`app_by`=%s,`alasan_app_dpp`=%s WHERE atasan=%s AND nama_pegawai=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
+        instdata = "UPDATE `ijin_absensi` SET `aktif_appdpp_manager`='0',`app`=%s,`app_by`=%s,`alasan_app_dpp`=%s WHERE atasan=%s AND nama_pegawai=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
         cursorinst= self.conn.cursor()
         excinst= cursorinst.execute(instdata,(app_dpp,getnamadapat,alasan_app,getnamadapat,nama_karyawan_ijin))
 
         self.conn.commit()
 
         return getnamadapat
+
+    def check_double(self,data):
+        ceksql= "SELECT `nama_pegawai` FROM `employee` WHERE id_telegram=%s"
+        cursorcek= self.conn.cursor()
+        cursorcek.execute(ceksql, (data))
+        namadapat = cursorcek.fetchone()
+        getnamadapat= namadapat.get('nama_pegawai')
+
+        ceksqlcount= "SELECT COUNT(nama_pegawai) AS ceknama FROM `ijin_absensi` WHERE nama_pegawai=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
+        cursor= self.conn.cursor()
+        cursor.execute(ceksqlcount, (getnamadapat))
+        checking = cursor.fetchone()
+
+        return checking.get('ceknama')

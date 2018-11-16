@@ -43,19 +43,27 @@ def start(bot, update):
     Start function. Displayed whenever the /start command is called.
     This function sets the language of the bot.
     """
-    # Create buttons to slect ijin:
-    keyboard = [['TELAT', 'ABSEN', 'DINAS KELUAR']]
+    user = update.message.from_user
 
-    # Create initial message:
-    message = "Hey, Saya VIO Bot Ijin Absensi! \n\n\
-Silahkan pilih ijin apa untuk memulai"
+    cek_double=db.check_double(user.id)
 
-    reply_markup = ReplyKeyboardMarkup(keyboard,
-                                       one_time_keyboard=True,
-                                       resize_keyboard=True)
-    update.message.reply_text(message, reply_markup=reply_markup)
+    if cek_double<1:
+        # Create buttons to slect ijin:
+        keyboard = [['TELAT', 'ABSEN', 'DINAS KELUAR']]
 
-    print(Data_Ijin_Semua)
+        # Create initial message:
+        message = "Hey, Saya VIO Bot Ijin Absensi! \n\n\
+    Silahkan pilih ijin apa untuk memulai"
+
+        reply_markup = ReplyKeyboardMarkup(keyboard,
+                                           one_time_keyboard=True,
+                                           resize_keyboard=True)
+        update.message.reply_text(message, reply_markup=reply_markup)
+
+        print(Data_Ijin_Semua)
+
+    else:
+        kirim_notdouble(bot, update)
 
     return SET_IJIN
 
@@ -72,6 +80,7 @@ def set_ijin(bot, update):
     logger.info("Ijin set by {} to {}.".format(user.first_name, IJIN))
     update.message.reply_text(pilihtanggal[IJIN],
                               reply_markup=ReplyKeyboardRemove())
+
 
     Data_Ijin_Semua.setdefault(user.id, []).append(user.id)
     Data_Ijin_Semua.setdefault(user.id, []).append(IJIN)
@@ -171,6 +180,10 @@ def selesai(bot, update):
 
     return SELESAI
 
+def kirim_notdouble(bot, update):
+    user = update.message.from_user
+    bot.send_message(chat_id=user.id, text='Anda sudah melakukan ijin satu kali pada hari ini. Kembali lagi besok dengan /start')
+
 def batal(bot, update):
     user = update.message.from_user
     del Data_Ijin_Semua[user.id]
@@ -268,9 +281,9 @@ def selesai_app(bot, update):
     data_tele=db.get_tele_karyawan(data)
 
     if data[2]=="APPROVE":
-        appis="Disetujui"
+        appis="Menyetujui"
     elif data[2]=="DISAPPROVE":
-        appis="tidak Disetujui"
+        appis="tidak Menyetujui"
 
     bot.send_message(chat_id=data_tele, text='Manager anda dengan nama %s %s ijin anda dengan alasan seperti berikut \n %s' %(datainsert,appis,data[3]))
 
@@ -334,7 +347,7 @@ def main():
 
     # Add conversation handler with predefined states:
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start),CommandHandler('pilih_karyawan', pilih_karyawan)],
+        entry_points=[CommandHandler('start', start)],
 
         states={
             SET_IJIN: [RegexHandler('^(TELAT|ABSEN|DINAS KELUAR)$', set_ijin)],
@@ -361,7 +374,7 @@ def main():
 
         },
 
-        fallbacks=[CommandHandler('help', help)]
+        fallbacks=[CommandHandler('help', help),CommandHandler('pilih_karyawan', pilih_karyawan)]
     )
 
     dp.add_handler(conv_handler)
