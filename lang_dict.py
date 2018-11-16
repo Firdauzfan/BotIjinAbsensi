@@ -11,7 +11,7 @@ command /atasan.",
     "ABSEN": "Selanjutnya \n\n\
 Berikut pilih atasan anda untuk meminta ijin absen anda. \
 command /atasan .",
-    "DINAS KELUAR": "SSelanjutnya \n\n\
+    "DINAS KELUAR": "Selanjutnya \n\n\
 Berikut pilih atasan anda untuk meminta ijin dinas keluar anda. \
 command /atasan ."
 }
@@ -134,20 +134,4 @@ command /calendar .",
     "DINAS KELUAR": "Selanjutnya \n\n\
 Berikut pilih tanggal untuk meminta ijin dinas keluar anda. \
 command /calendar ."
-}
-
-faq_info = {
-    "IND": "Bila masih ada pertanyaan tentang VIO silahkan email ke support@vioint.co.id \
-",
-    "EN": "If you have any question you can email at support@vioint.co.id",
-}
-
-help_info = {
-    "IND": "Gunakan /done untuk mengakhiri chat. \nGunakan /start untuk memulai VIO Bot lagi.",
-    "EN": "Use /done to end chat. \nUse /start to restart VIO Bot."
-}
-
-template = {
-    "IND": "",
-    "EN": ""
 }

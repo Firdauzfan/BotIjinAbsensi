@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 # Global vars:
 IJIN = "ABSEN"
-SET_IJIN,ATASAN,ALASAN,SELESAI,CALENDAR,ALASAN_IJIN,PILIH_KARYAWAN,BATAL, ALASAN_APP, SELESAI_APP, BATAL_APP, APP_DPP, ABOUT  = range(13)
+SET_IJIN,ATASAN,ALASAN,SELESAI,CALENDAR,ALASAN_IJIN,PILIH_KARYAWAN,BATAL, ALASAN_APP, SELESAI_APP, BATAL_APP, APP_DPP = range(12)
 STATE = SET_IJIN
 
 data_all_tele= db.get_tele_all()
@@ -300,26 +300,6 @@ def batal_app(bot, update):
 
     return BATAL_APP
 
-def about_bot(bot, update):
-    """
-    About function. Displays info about VIO Bot.
-    """
-    user = update.message.from_user
-    logger.info("About info requested by {}.".format(user.first_name))
-    bot.send_message(chat_id=update.message.chat_id, text=about_info[LANG])
-    bot.send_message(chat_id=update.message.chat_id, text=back2menu[LANG])
-    return
-
-def help(bot, update):
-    """
-    Help function.
-    This displays a set of commands available for the bot.
-    """
-    user = update.message.from_user
-    logger.info("User {} asked for help.".format(user.first_name))
-    update.message.reply_text(help_info[LANG],
-                              reply_markup=ReplyKeyboardRemove())
-
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
@@ -347,7 +327,7 @@ def main():
 
     # Add conversation handler with predefined states:
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('start', start),CommandHandler('pilih_karyawan', pilih_karyawan)],
 
         states={
             SET_IJIN: [RegexHandler('^(TELAT|ABSEN|DINAS KELUAR)$', set_ijin)],
@@ -374,7 +354,7 @@ def main():
 
         },
 
-        fallbacks=[CommandHandler('help', help),CommandHandler('pilih_karyawan', pilih_karyawan)]
+        fallbacks=[CommandHandler('help', help),CommandHandler('pilih_karyawan', pilih_karyawan),CommandHandler('start', start)]
     )
 
     dp.add_handler(conv_handler)
