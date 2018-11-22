@@ -67,6 +67,7 @@ class DBHelper:
         tanggal=data[2]
         manager=data[3]
         alasan_ijin=data[4]
+        lampiran_ijin=data[5]
 
         ts = time.time()
         timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -77,9 +78,9 @@ class DBHelper:
         namadapat = cursorcek.fetchone()
         getnamadapat= namadapat.get('nama_pegawai')
 
-        instdata = "INSERT INTO `ijin_absensi`(`nama_pegawai`, `ijin`, `alasan_ijin`, `tanggal_ijin`, `waktu_buat_ijin`, `atasan`,`aktif_appdpp_manager`,`aktif_notif_karyawan `) VALUES (%s,%s,%s,%s,%s,%s,'1','0')"
+        instdata = "INSERT INTO `ijin_absensi`(`nama_pegawai`, `ijin`, `alasan_ijin`, `tanggal_ijin`, `waktu_buat_ijin`, `atasan`, `lampiran`,`aktif_appdpp_manager`,`aktif_notif_karyawan`) VALUES (%s,%s,%s,%s,%s,%s,%s,'1','0')"
         cursorinst= self.conn.cursor()
-        excinst= cursorinst.execute(instdata,(getnamadapat,ijin,alasan_ijin,tanggal,timestamp,manager))
+        excinst= cursorinst.execute(instdata,(getnamadapat,ijin,alasan_ijin,tanggal,timestamp,manager,lampiran_ijin))
 
         self.conn.commit()
 
@@ -97,7 +98,7 @@ class DBHelper:
         namadapat = cursorcek.fetchone()
         getnamadapat= namadapat.get('nama_pegawai')
 
-        instdata = "UPDATE `ijin_absensi` SET `aktif_appdpp_manager`='0',`aktif_notif_karyawan `='1',`app`=%s,`app_by`=%s,`alasan_app_dpp`=%s WHERE atasan=%s AND nama_pegawai=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
+        instdata = "UPDATE `ijin_absensi` SET `aktif_appdpp_manager`='0',`aktif_notif_karyawan`='1',`app`=%s,`app_by`=%s,`alasan_app_dpp`=%s WHERE atasan=%s AND nama_pegawai=%s AND DATE(`waktu_buat_ijin`) = DATE(CURDATE())"
         cursorinst= self.conn.cursor()
         excinst= cursorinst.execute(instdata,(app_dpp,getnamadapat,alasan_app,getnamadapat,nama_karyawan_ijin))
 

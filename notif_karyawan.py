@@ -62,6 +62,6 @@ def send_notif_karyawan(idtele,insertdata,alasanapp,appordpp):
     elif appordpp=="DISAPPROVE":
         appis="tidak Menyetujui"
 
-    bot.send_message(chat_id=idtele, text='Manager anda dengan nama %s %s ijin anda dengan alasan seperti berikut \n %s' %(insertdata,appis,alasanapp))
+    bot.send_message(chat_id=idtele, text='Atasan anda dengan nama %s %s ijin anda dengan alasan seperti berikut \n %s' %(insertdata,appis,alasanapp))
 
 notif()

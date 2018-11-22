@@ -64,6 +64,24 @@ Masukkan alasan untuk meminta ijin absen anda.",
 Masukkan alasan alasan untuk meminta ijin dinas keluar anda."
 }
 
+ijinlampiran_attach = {
+    "TELAT": "Selanjutnya \n\n\
+Masukkan file attachment untuk meminta ijin telat anda.",
+    "ABSEN": "Selanjutnya \n\n\
+Masukkan file attachment untuk meminta ijin absen anda.",
+    "DINAS KELUAR": "Selanjutnya \n\n\
+Masukkan file attachment untuk meminta ijin dinas keluar anda."
+}
+
+ijin_lampiran = {
+    "TELAT": "Selanjutnya \n\n\
+Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Telat. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Telat tanpa lampiran ",
+    "ABSEN": "Selanjutnya \n\n\
+Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Absen. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Absen tanpa lampiran ",
+    "DINAS KELUAR": "Selanjutnya \n\n\
+Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Dinas Keluar. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Dinas Keluar tanpa lampiran "
+}
+
 selesaiin = {
     "TELAT": "Selanjutnya \n\n\
 Gunakan /selesai untuk mengirimkan Ijin Telat. \nGunakan /batal untuk mengulang Ijin Telat Bot dari Awal lagi",
@@ -117,10 +135,10 @@ kalimatselesai_app = {
 Silahkan ditunggu pilih /start untuk memulai ijin atau /pilih_karyawan untuk mengkonfirmasi ijin. \n\
 Terima Kasih",
     "ABSEN": "Selamat Konfirmasi Ijin Absen Karyawan Berhasil \n\n\
-ilahkan ditunggu pilih /start untuk memulai ijin atau /pilih_karyawan untuk mengkonfirmasi ijin. \n\
+Silahkan ditunggu pilih /start untuk memulai ijin atau /pilih_karyawan untuk mengkonfirmasi ijin. \n\
 Terima Kasih",
     "DINAS KELUAR": "Selamat Konfirmasi Dinas Keluar Telat Karyawan  Berhasil \n\n\
-ilahkan ditunggu pilih /start untuk memulai ijin atau /pilih_karyawan untuk mengkonfirmasi ijin. \n\
+Silahkan ditunggu pilih /start untuk memulai ijin atau /pilih_karyawan untuk mengkonfirmasi ijin. \n\
 Terima Kasih"
 }
 

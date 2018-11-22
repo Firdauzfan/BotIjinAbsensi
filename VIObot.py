@@ -12,6 +12,7 @@ import apiai,json
 from lang_dict import *
 import logging
 import datetime
+import os
 import telegramcalendar
 
 # You might need to add your tokens to this file...
@@ -29,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 # Global vars:
 IJIN = "ABSEN"
-SET_IJIN,ATASAN,ALASAN,SELESAI,CALENDAR,ALASAN_IJIN,PILIH_KARYAWAN,BATAL, ALASAN_APP, SELESAI_APP, BATAL_APP, APP_DPP = range(12)
+SET_IJIN,ATASAN,ALASAN,SELESAI,CALENDAR,ALASAN_IJIN,PILIH_KARYAWAN,BATAL, ALASAN_APP, SELESAI_APP, BATAL_APP, APP_DPP,LAMPIRAN_IJIN = range(13)
 STATE = SET_IJIN
 
 data_all_tele= db.get_tele_all()
@@ -53,7 +54,7 @@ def start(bot, update):
 
         # Create initial message:
         message = "Hey, Saya VIO Bot Ijin Absensi! \n\n\
-    Silahkan pilih ijin apa untuk memulai"
+Silahkan pilih ijin apa untuk memulai"
 
         reply_markup = ReplyKeyboardMarkup(keyboard,
                                            one_time_keyboard=True,
@@ -152,7 +153,7 @@ def alasan_ijin(bot, update):
     user = update.message.from_user
     logger.info("Alasan_ijin set by {} to {}.".format(user.first_name, alasan))
 
-    update.message.reply_text(selesaiin[IJIN],
+    update.message.reply_text(ijin_lampiran[IJIN],
                               reply_markup=ReplyKeyboardRemove())
 
     Data_Ijin_Semua.setdefault(user.id, []).append(alasan)
@@ -161,10 +162,50 @@ def alasan_ijin(bot, update):
 
     return ALASAN_IJIN
 
+def dengan_lampiran_ijin(bot, update):
+    user = update.message.from_user
+    logger.info("dengan_lampiran_ijin command requested by {}.".format(user.first_name))
+    update.message.reply_text(ijinlampiran_attach[IJIN], reply_markup=ReplyKeyboardRemove())
+
+    print(Data_Ijin_Semua)
+
+    return LAMPIRAN_IJIN
+
+def set_dengan_lampiran_ijin(bot, update):
+    lampiran = update.message.document.file_name
+    lampiran_id= update.message.document.file_id
+    lampiran_file= bot.get_file(file_id=lampiran_id)
+    lampiran_file.download('Lampiran/%s' %lampiran)
+    user = update.message.from_user
+    logger.info("dengan_lampiran_ijin set by {} to {}.".format(user.first_name, lampiran))
+    update.message.reply_text(selesaiin[IJIN],
+                              reply_markup=ReplyKeyboardRemove())
+
+    Data_Ijin_Semua.setdefault(user.id, []).append(lampiran)
+
+    print(Data_Ijin_Semua)
+
+
+    return SELESAI
+
+def tanpa_lampiran_ijin(bot, update):
+    lampiran = 'NULL'
+    user = update.message.from_user
+    logger.info("dengan_lampiran_ijin set by {} to {}.".format(user.first_name, lampiran))
+
+    update.message.reply_text(selesaiin[IJIN],
+                              reply_markup=ReplyKeyboardRemove())
+
+    Data_Ijin_Semua.setdefault(user.id, []).append(lampiran)
+
+    print(Data_Ijin_Semua)
+
+    return LAMPIRAN_IJIN
+
 def selesai(bot, update):
     user = update.message.from_user
     data= Data_Ijin_Semua[user.id]
-
+    lampiranfiles = Data_Ijin_Semua[user.id][5]
     datainsert=db.insert_data_ijin(data)
 
     logger.info("ijin_selesai set by {}".format(user.first_name))
@@ -174,6 +215,8 @@ def selesai(bot, update):
     data_tele=db.get_tele_manager(data)
 
     bot.send_message(chat_id=data_tele, text='Karyawan dengan nama %s ingin ijin %s pada tanggal %s dengan alasan seperti berikut \n %s' %(datainsert,data[1],data[2],data[4]))
+    lampfile = open('Lampiran/%s' %lampiranfiles , 'rb')
+    bot.send_document(chat_id=data_tele, document=lampfile)
     bot.send_message(chat_id=data_tele, text=pilih_user_konfirm[IJIN])
 
     del Data_Ijin_Semua[user.id]
@@ -186,13 +229,14 @@ def kirim_notdouble(bot, update):
 
 def batal(bot, update):
     user = update.message.from_user
+    # lampiranfile = Data_Ijin_Semua[user.id][:-1]
+    # os.remove("Lampiran/%s" %lampiranfile)
     del Data_Ijin_Semua[user.id]
 
     update.message.reply_text(batalkalimat[IJIN],
                               reply_markup=ReplyKeyboardRemove())
 
     return BATAL
-
 
 def pilih_karyawan(bot, update):
     user = update.message.from_user
@@ -285,7 +329,7 @@ def selesai_app(bot, update):
     elif data[2]=="DISAPPROVE":
         appis="tidak Menyetujui"
 
-    bot.send_message(chat_id=data_tele, text='Manager anda dengan nama %s %s ijin anda dengan alasan seperti berikut \n %s' %(datainsert,appis,data[3]))
+    bot.send_message(chat_id=data_tele, text='Atasan anda dengan nama %s %s ijin anda dengan alasan seperti berikut \n %s' %(datainsert,appis,data[3]))
 
     del App_Manager_Semua[user.id]
 
@@ -334,7 +378,9 @@ def main():
 
             ATASAN: [CommandHandler('atasan', atasan),RegexHandler('^(%s)$' %listkaryawan, set_atasan),CommandHandler('batal', batal)],
 
-            ALASAN_IJIN: [CommandHandler('alasan_ijin', alasan_ijin),CommandHandler('selesai', selesai),CommandHandler('batal', batal),MessageHandler(Filters.text, alasan_ijin)],
+            ALASAN_IJIN: [CommandHandler('alasan_ijin', alasan_ijin),CommandHandler('dengan_lampiran_ijin', dengan_lampiran_ijin),CommandHandler('tanpa_lampiran_ijin', tanpa_lampiran_ijin),CommandHandler('batal', batal),MessageHandler(Filters.text, alasan_ijin)],
+
+            LAMPIRAN_IJIN: [CommandHandler('dengan_lampiran_ijin', dengan_lampiran_ijin),CommandHandler('tanpa_lampiran_ijin', tanpa_lampiran_ijin),CommandHandler('selesai', selesai),CommandHandler('batal', batal),MessageHandler(Filters.document, set_dengan_lampiran_ijin)],
 
             SELESAI: [CommandHandler('selesai', selesai),CommandHandler('batal', batal),CommandHandler('start', start)],
 
