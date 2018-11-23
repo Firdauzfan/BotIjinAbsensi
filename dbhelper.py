@@ -67,7 +67,8 @@ class DBHelper:
         tanggal=data[2]
         manager=data[3]
         alasan_ijin=data[4]
-        lampiran_ijin=data[5]
+        lampiran_tipe=data[5]
+        lampiran_ijin=data[6]
 
         ts = time.time()
         timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -78,9 +79,9 @@ class DBHelper:
         namadapat = cursorcek.fetchone()
         getnamadapat= namadapat.get('nama_pegawai')
 
-        instdata = "INSERT INTO `ijin_absensi`(`nama_pegawai`, `ijin`, `alasan_ijin`, `tanggal_ijin`, `waktu_buat_ijin`, `atasan`, `lampiran`,`aktif_appdpp_manager`,`aktif_notif_karyawan`) VALUES (%s,%s,%s,%s,%s,%s,%s,'1','0')"
+        instdata = "INSERT INTO `ijin_absensi`(`nama_pegawai`, `ijin`, `alasan_ijin`, `tanggal_ijin`, `waktu_buat_ijin`, `atasan`, `lampiran`,`tipe_lampiran`,`aktif_notif_manager`,`aktif_appdpp_manager`,`aktif_notif_karyawan`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,'1','1','0')"
         cursorinst= self.conn.cursor()
-        excinst= cursorinst.execute(instdata,(getnamadapat,ijin,alasan_ijin,tanggal,timestamp,manager,lampiran_ijin))
+        excinst= cursorinst.execute(instdata,(getnamadapat,ijin,alasan_ijin,tanggal,timestamp,manager,lampiran_ijin,lampiran_tipe))
 
         self.conn.commit()
 

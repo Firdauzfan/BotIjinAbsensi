@@ -73,22 +73,31 @@ Masukkan file attachment untuk meminta ijin absen anda.",
 Masukkan file attachment untuk meminta ijin dinas keluar anda."
 }
 
+pilihijinlampiran_attach = {
+    "TELAT": "Selanjutnya \n\n\
+Pilih file attachment untuk meminta ijin telat anda.",
+    "ABSEN": "Selanjutnya \n\n\
+Pilih file attachment untuk meminta ijin absen anda.",
+    "DINAS KELUAR": "Selanjutnya \n\n\
+Pilih file attachment untuk meminta ijin dinas keluar anda."
+}
+
 ijin_lampiran = {
     "TELAT": "Selanjutnya \n\n\
-Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Telat. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Telat tanpa lampiran ",
+Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Telat. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Telat tanpa lampiran \nGunakan /batal untuk mengulang Ijin Dinas Keluar Bot dari Awal lagi",
     "ABSEN": "Selanjutnya \n\n\
-Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Absen. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Absen tanpa lampiran ",
+Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Absen. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Absen tanpa lampiran \nGunakan /batal untuk mengulang Ijin Dinas Keluar Bot dari Awal lagi",
     "DINAS KELUAR": "Selanjutnya \n\n\
-Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Dinas Keluar. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Dinas Keluar tanpa lampiran "
+Gunakan /dengan_lampiran_ijin untuk mengirimkan lampiran Ijin Dinas Keluar. \nGunakan /tanpa_lampiran_ijin untuk menyelesaikan Ijin Dinas Keluar tanpa lampiran \nGunakan /batal untuk mengulang Ijin Dinas Keluar Bot dari Awal lagi"
 }
 
 selesaiin = {
     "TELAT": "Selanjutnya \n\n\
-Gunakan /selesai untuk mengirimkan Ijin Telat. \nGunakan /batal untuk mengulang Ijin Telat Bot dari Awal lagi",
+Gunakan /selesai untuk mengirimkan Ijin Telat. \nGunakan /batal_ijin untuk mengulang Ijin Telat Bot dari Awal lagi",
     "ABSEN": "Selanjutnya \n\n\
-Gunakan /selesai untuk mengirimkan Ijin Absen. \nGunakan /batal untuk mengulang Ijin Absen Bot dari Awal lagi",
+Gunakan /selesai untuk mengirimkan Ijin Absen. \nGunakan /batal_ijin untuk mengulang Ijin Absen Bot dari Awal lagi",
     "DINAS KELUAR": "Selanjutnya \n\n\
-Gunakan /selesai untuk mengirimkan Ijin Dinas Keluar. \nGunakan /batal untuk mengulang Ijin Dinas Keluar Bot dari Awal lagi"
+Gunakan /selesai untuk mengirimkan Ijin Dinas Keluar. \nGunakan /batal_ijin untuk mengulang Ijin Dinas Keluar Bot dari Awal lagi"
 }
 
 selesaiin_app = {
