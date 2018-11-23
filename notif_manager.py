@@ -64,7 +64,10 @@ def send_notif_manager(idtele,karyawannama,alasanijin,tanggalijin,ijinya,lampira
     if lampiran_tipe=='NULL':
         bot.send_message(chat_id=idtele, text='Karyawan dengan nama %s ingin ijin %s pada tanggal %s dengan alasan seperti berikut \n %s' %(karyawannama,ijinya,tanggalijin,alasanijin))
         bot.send_message(chat_id=idtele, text=pilih_user_konfirm[ijinya])
-    elif lampiran_tipe=='Document PDF':
+    elif lampiran_tipe=='Document':
+        bot.send_message(chat_id=idtele, text='Karyawan dengan nama %s ingin ijin %s pada tanggal %s dengan alasan seperti berikut \n %s' %(karyawannama,ijinya,tanggalijin,alasanijin))
+        bot.send_message(chat_id=idtele, text=pilih_user_konfirm[ijinya])
+    elif lampiran_tipe=='Photo':
         bot.send_message(chat_id=idtele, text='Karyawan dengan nama %s ingin ijin %s pada tanggal %s dengan alasan seperti berikut \n %s' %(karyawannama,ijinya,tanggalijin,alasanijin))
         bot.send_message(chat_id=idtele, text=pilih_user_konfirm[ijinya])
 

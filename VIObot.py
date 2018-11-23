@@ -166,7 +166,7 @@ def alasan_ijin(bot, update):
 def dengan_lampiran_ijin(bot, update):
     user = update.message.from_user
 
-    keyboard = [['Document PDF', 'Photo']]
+    keyboard = [['Document', 'Photo']]
 
     reply_markup = ReplyKeyboardMarkup(keyboard,
                                        one_time_keyboard=True,
@@ -181,7 +181,7 @@ def dengan_lampiran_ijin(bot, update):
 
 def define_dengan_lampiran_ijin_photo(bot, update):
     user = update.message.from_user
-    logger.info("define_dengan_lampiran_ijin_document command requested by {}.".format(user.first_name))
+    logger.info("define_dengan_lampiran_ijin_photo command requested by {}.".format(user.first_name))
     update.message.reply_text(ijinlampiran_attach[IJIN], reply_markup=ReplyKeyboardRemove())
 
     Data_Ijin_Semua.setdefault(user.id, []).append(update.message.text)
@@ -193,16 +193,19 @@ def define_dengan_lampiran_ijin_photo(bot, update):
 def set_dengan_lampiran_ijin_photo(bot, update):
     user = update.message.from_user
 
-    lampiran = update.message.document.file_name
-    lampiran_id= update.message.document.file_id
-    lampiran_file= bot.get_file(file_id=lampiran_id)
-    lampiran_file.download('Lampiran/%s' %lampiran)
+    ts = time.time()
+    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-    logger.info("dengan_lampiran_ijin set by {} to {}.".format(user.first_name, lampiran))
+    lampiran_id= update.message.photo[-1].file_id
+    namafilesave= '%s_%s_%s' %(user.id,timestamp,lampiran_id)
+    lampiran_file= bot.get_file(file_id=lampiran_id)
+    lampiran_file.download('Lampiran/%s' %namafilesave)
+
+    logger.info("set_dengan_lampiran_ijin_document set by {} to {}.".format(user.first_name, namafilesave))
     update.message.reply_text(selesaiin[IJIN],
                               reply_markup=ReplyKeyboardRemove())
 
-    Data_Ijin_Semua.setdefault(user.id, []).append(lampiran)
+    Data_Ijin_Semua.setdefault(user.id, []).append(namafilesave)
 
     print(Data_Ijin_Semua)
 
@@ -271,13 +274,13 @@ def selesai(bot, update):
 
     if data[5]=='NULL':
         process = subprocess.Popen("python3 notif_manager.py", shell=True)
-        # bot.send_message(chat_id=data_tele, text='Karyawan dengan nama %s ingin ijin %s pada tanggal %s dengan alasan seperti berikut \n %s' %(datainsert,data[1],data[2],data[4]))
-        # bot.send_message(chat_id=data_tele, text=pilih_user_konfirm[IJIN])
-    elif data[5]=='Document PDF':
-        #bot.send_message(chat_id=data_tele, text='Karyawan dengan nama %s ingin ijin %s pada tanggal %s dengan alasan seperti berikut \n %s' %(datainsert,data[1],data[2],data[4]))
+    elif data[5]=='Document':
         lampfile = open('Lampiran/%s' %data[6] , 'rb')
         bot.send_document(chat_id=data_tele, document=lampfile)
-        #bot.send_message(chat_id=data_tele, text=pilih_user_konfirm[IJIN])
+        process = subprocess.Popen("python3 notif_manager.py", shell=True)
+    elif data[5]=='Photo':
+        lampfile = open('Lampiran/%s' %data[6] , 'rb')
+        bot.send_photo(chat_id=data_tele, photo=lampfile)
         process = subprocess.Popen("python3 notif_manager.py", shell=True)
 
     del Data_Ijin_Semua[user.id]
@@ -304,7 +307,7 @@ def batal_ijin(bot, update):
 
     if data[5]=='NULL':
         del Data_Ijin_Semua[user.id]
-    elif data[5]=='Document PDF':
+    elif data[5]=='Document':
         os.remove("Lampiran/%s" %data[6])
         del Data_Ijin_Semua[user.id]
 
@@ -448,7 +451,7 @@ def main():
 
             ALASAN_IJIN: [CommandHandler('alasan_ijin', alasan_ijin),CommandHandler('dengan_lampiran_ijin', dengan_lampiran_ijin),CommandHandler('tanpa_lampiran_ijin', tanpa_lampiran_ijin),CommandHandler('batal', batal),MessageHandler(Filters.text, alasan_ijin)],
 
-            LAMPIRAN_IJIN: [CommandHandler('dengan_lampiran_ijin', dengan_lampiran_ijin),RegexHandler('^(Document PDF)$', define_dengan_lampiran_ijin_document),RegexHandler('^(Photo)$', set_dengan_lampiran_ijin_photo),CommandHandler('tanpa_lampiran_ijin', tanpa_lampiran_ijin),CommandHandler('selesai', selesai),CommandHandler('batal', batal),MessageHandler(Filters.document, set_dengan_lampiran_ijin_document)],
+            LAMPIRAN_IJIN: [CommandHandler('dengan_lampiran_ijin', dengan_lampiran_ijin),RegexHandler('^(Document)$', define_dengan_lampiran_ijin_document),RegexHandler('^(Photo)$', define_dengan_lampiran_ijin_photo),CommandHandler('tanpa_lampiran_ijin', tanpa_lampiran_ijin),CommandHandler('selesai', selesai),CommandHandler('batal', batal),MessageHandler(Filters.document, set_dengan_lampiran_ijin_document),MessageHandler(Filters.photo, set_dengan_lampiran_ijin_photo)],
 
             SELESAI: [CommandHandler('selesai', selesai),CommandHandler('batal_ijin', batal_ijin),CommandHandler('start', start)],
 
