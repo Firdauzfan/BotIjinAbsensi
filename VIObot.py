@@ -47,25 +47,41 @@ def start(bot, update):
     """
     user = update.message.from_user
 
-    cek_double=db.check_double(user.id)
+    # Create buttons to slect ijin:
+    keyboard = [['TELAT', 'ABSEN', 'DINAS KELUAR']]
 
-    if cek_double<1:
-        # Create buttons to slect ijin:
-        keyboard = [['TELAT', 'ABSEN', 'DINAS KELUAR']]
-
-        # Create initial message:
-        message = "Hey, Saya VIO Bot Ijin Absensi! \n\n\
+    # Create initial message:
+    message = "Hey, Saya VIO Bot Ijin Absensi! \n\n\
 Silahkan pilih ijin apa untuk memulai"
 
-        reply_markup = ReplyKeyboardMarkup(keyboard,
-                                           one_time_keyboard=True,
-                                           resize_keyboard=True)
-        update.message.reply_text(message, reply_markup=reply_markup)
+    reply_markup = ReplyKeyboardMarkup(keyboard,
+                                       one_time_keyboard=True,
+                                       resize_keyboard=True)
+    update.message.reply_text(message, reply_markup=reply_markup)
 
-        print(Data_Ijin_Semua)
+    print(Data_Ijin_Semua)
 
-    else:
-        kirim_notdouble(bot, update)
+    #Untuk ceking biar sehari 1 ijin
+
+#     cek_double=db.check_double(user.id)
+#
+#     if cek_double<1:
+#         # Create buttons to slect ijin:
+#         keyboard = [['TELAT', 'ABSEN', 'DINAS KELUAR']]
+#
+#         # Create initial message:
+#         message = "Hey, Saya VIO Bot Ijin Absensi! \n\n\
+# Silahkan pilih ijin apa untuk memulai"
+#
+#         reply_markup = ReplyKeyboardMarkup(keyboard,
+#                                            one_time_keyboard=True,
+#                                            resize_keyboard=True)
+#         update.message.reply_text(message, reply_markup=reply_markup)
+#
+#         print(Data_Ijin_Semua)
+#
+#     else:
+#         kirim_notdouble(bot, update)
 
     return SET_IJIN
 
